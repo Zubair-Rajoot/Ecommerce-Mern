@@ -1,34 +1,49 @@
-const app = require("./app");
+// Import Dependencies
+const express = require("express");
 const dotenv = require("dotenv");
-const connectDatabase = require('./config/database')
+const connectDatabase = require("./config/database");
+const cloudinary = require("cloudinary").v2; // ✅ Explicitly use v2
 
-
-process.on("uncaughtException", (err)=>{
-    console.log(`Error ${err.message}`);
-    console.log(`shutting down the server due to uncaught exception `);
-
-    server.close(()=>{
-        process.exit(1)
-    });
-})
-
-
-
-dotenv.config({path: "backend/config/config.env"})
-
-connectDatabase();
-
-let server = app.listen(process.env.PORT, ()=>{
-    console.log(`server is working on Port http://localhost:${process.env.PORT}`)
+// Handle Uncaught Exceptions (e.g., console.log(unknownVar))
+process.on("uncaughtException", (err) => {
+  console.log(`Error: ${err.message}`);
+  console.log("Shutting down the server due to an uncaught exception");
+  process.exit(1);
 });
 
+// ✅ Load Environment Variables First
+dotenv.config({ path: "./backend/config/config.env" });
+
+// ✅ Configure Cloudinary BEFORE anything else
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+console.log("Cloudinary ENV Vars:", process.env.CLOUDINARY_API_KEY);
 
 
-process.on('unhandledRejection', (err)=>{
-    console.log(`Error ${err.message}`);
-    console.log(`shutting down the server due to unhandled rejection `);
+console.log("✅ Cloudinary Config Loaded");
 
-    server.close(()=>{
-        process.exit(1)
-    });
+// ✅ Connect to Database
+connectDatabase();
+
+// ✅ Import App
+const app = require("./app");
+
+// ✅ Start Server
+const PORT = process.env.PORT || 4000;
+const server = app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+// ✅ Handle Unhandled Promise Rejections
+process.on("unhandledRejection", (err) => {
+  console.log(`Error: ${err.message}`);
+  console.log("Shutting down the server due to an unhandled promise rejection");
+
+  server.close(() => {
+    process.exit(1);
+  });
 });

@@ -1,0 +1,23 @@
+.loading {
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .loading div {
+    width: 80px;
+    height: 80px;
+    border: 5px solid transparent;
+    border-top: 5px solid #3027ae;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  

@@ -4,28 +4,41 @@ const User = require('../models/userModel');
 const sendToken = require('../utils/jwtToken');
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
+const cloudinary = require("cloudinary");
 
 
 //registr user 
-exports.registerUser = catchAsyncErrors(async(req, res, next)=>{
+exports.registerUser = catchAsyncErrors(async (req, res, next) => {
+    // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+    //   folder: "avatars",
+    //   width: 150,
+    //   crop: "scale",
+    // });
 
-    const {name, email, password} = req.body;
-
-    const user = await User.create({
-        name, email, password,
-        avatar:{
-            public_id: "this is sample id ",
-          url: "profilepicurl",
-        }
+  
+      const myCloud = await cloudinary.uploader.upload(req.body.avatar, {
+        folder: "avatars",
+        width: 150,
+        crop: "scale",
     });
 
-   
+    console.log("Cloudinary Response:", myCloud);
+
+  
+    const { name, email, password } = req.body;
+  
+    const user = await User.create({
+      name,
+      email,
+      password,
+      avatar: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
+    });
+  
     sendToken(user, 201, res);
-
-
-});
-
-
+  });
 
 //login user 
 exports.loginUser = catchAsyncErrors(async(req, res, next)=>{
@@ -48,7 +61,10 @@ exports.loginUser = catchAsyncErrors(async(req, res, next)=>{
     };
 
 
+    const token = user.getJWTToken();
+    console.log("Generated token:", token);
     sendToken(user, 201, res)
+
     
 });
 
@@ -162,6 +178,7 @@ exports.getUserDetails = catchAsyncErrors(async(req, res, next)=>{
 });
 
 
+
 //update  user password
 exports.updatePassword = catchAsyncErrors(async(req, res, next)=>{
 
@@ -188,29 +205,45 @@ exports.updatePassword = catchAsyncErrors(async(req, res, next)=>{
 
 
 //update  user profile
-exports.updateProfile = catchAsyncErrors(async(req, res, next)=>{
-
+exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
     const newUserData = {
-        name: req.body.name,
-        email: req.body.email,
+      name: req.body.name,
+      email: req.body.email,
     };
-
-    const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
-        new: true,
-        runValidators: true,
-        useFindAndModify: false
+  
+    if (req.file) {
+      const user = await User.findById(req.user.id);
+  
+      // Delete the old avatar from Cloudinary if it exists
+      if (user.avatar.public_id) {
+        await cloudinary.uploader.destroy(user.avatar.public_id);
+      }
+  
+      // Upload the new avatar to Cloudinary
+      const myCloud = await cloudinary.uploader.upload(req.file.path, {
+        folder: "avatars",
+        width: 150,
+        crop: "scale",
+      });
+  
+      newUserData.avatar = {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      };
+    }
+  
+    // Update the user in the database
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, newUserData, {
+      new: true, // Return the updated document
+      runValidators: true,
+      useFindAndModify: false,
     });
-
-
+  
     res.status(200).json({
-        success: true,
-        user
+      success: true,
+      user: updatedUser, // Return the updated user data
     });
-
-
-});
-
-
+  });
 
 
 //get all users -------- admin

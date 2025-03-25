@@ -1,20 +1,24 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import { CgMouse } from "react-icons/cg";
-import './Home.css';
-import Product from './Product';
-
-const product = {
-  name: "Red Shirt",
-  images: [{ url: 'https://italiano.pk/cdn/shop/files/0122253-MRN_1724f328-4d42-4c7b-9f74-e8c85ba48e06.jpg?v=1717236711' }],
-  price: "3000",
-  _id: "jujhjh",
-  ratings: 4.5 // ⭐ Make sure ratings exist
-};
-
+import "./Home.css";
+import Product from "./ProductCard";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../../redux/slices/productSlice";
+import Loader from "../layout/Loader/Loader";
+import MetaData from "../layout/MetaData";
 
 const Home = () => {
+  const dispatch = useDispatch();
+  const { products, loading, error } = useSelector((state) => state.products);
+
+  useEffect(() => {
+    dispatch(fetchProducts({ keyword: "", currentPage: 1 }));
+  }, [dispatch]);
+  
+
   return (
     <>
+    <MetaData title="All Products Ecommerce"/>
       <div className="bannner">
         <p>Welcome To Ecommerce</p>
         <h1>FIND AMAZING PRODUCTS BELOW</h1>
@@ -25,17 +29,18 @@ const Home = () => {
         </a>
       </div>
 
-      <h2 className="homeHeading" id='homeHeading'>Featured Products</h2>
-      
-      <div className="container" id='container'>
-        <Product product={product} />
-        <Product product={product} />
-        <Product product={product} />
-        <Product product={product} />
-        <Product product={product} />
-        <Product product={product} />
-        <Product product={product} />
-        <Product product={product} />
+
+      <h2 className="homeHeading" id="homeHeading">
+        Featured Products
+      </h2>
+
+      {loading && <Loader/>}
+      {error && <h3>Error: {error}</h3>}
+
+      <div className="container" id="container">
+        {products.map((product) => (
+          <Product key={product._id} product={product} />
+        ))}
       </div>
     </>
   );

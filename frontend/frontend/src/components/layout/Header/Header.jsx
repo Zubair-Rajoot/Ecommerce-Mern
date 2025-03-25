@@ -32,10 +32,12 @@ const Header = () => {
 
           {/* Right Icons */}
           <div className="right-icons">
-            <a href="/login">
+            <a href="/account">
               <FaUser className="icon" />
             </a>
-            <FaSearch className="icon" />
+           <a href="/search">
+           <FaSearch className="icon" />
+           </a>
             <FaShoppingCart className="icon" />
           </div>
         </div>

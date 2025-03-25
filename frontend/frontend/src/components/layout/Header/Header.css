@@ -105,3 +105,21 @@
 .down-icon:hover {
     color: #eb4034;
 }
+
+
+
+
+
+
+
+.speedDial {
+    position: fixed;
+    right: 3vmax;
+    top: 1vmax;
+  }
+  
+  .speedDialIcon {
+    width: 56px;
+    height: 56px;
+    border-radius: 100%;
+  }

@@ -11,6 +11,13 @@
   },
   "dependencies": {
     "@afzalimdad9/overlay-navbar": "^1.1.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.8",
+    "@mui/lab": "^6.0.0-beta.31",
+    "@mui/material": "^6.4.8",
+    "@mui/styles": "^6.4.7",
+    "@reduxjs/toolkit": "^2.6.1",
     "axios": "^1.8.3",
     "overlay-navbar": "^1.2.3",
     "react": "^19.0.0",
@@ -18,14 +25,16 @@
     "react-alert-template-basic": "^1.0.2",
     "react-dom": "^19.0.0",
     "react-helmet": "^6.1.0",
+    "react-helmet-async": "^2.0.5",
     "react-icons": "^5.5.0",
+    "react-js-pagination": "^3.0.3",
+    "react-material-ui-carousel": "^3.4.2",
     "react-rating-stars-component": "^2.2.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.3.0",
     "react-simple-star-rating": "^5.1.7",
-    "redux": "^5.0.1",
-    "redux-devtools-extension": "^2.13.9",
-    "redux-thunk": "^3.1.0"
+    "redux-persist": "^6.0.0",
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
